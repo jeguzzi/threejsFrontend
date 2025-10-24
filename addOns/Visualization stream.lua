@@ -46,7 +46,7 @@ function sysCall_init()
         zmqPUBSocket = simZMQ.socket(zmqContext, simZMQ.PUB)
         simZMQ.bind(zmqPUBSocket, string.format('tcp://*:%d', zmqPUBPort))
         zmqREPSocket = simZMQ.socket(zmqContext, simZMQ.REP)
-        simZMQ.bind(zmqPUBSocket, string.format('tcp://*:%d', zmqREPPort))
+        simZMQ.bind(zmqREPSocket, string.format('tcp://*:%d', zmqREPPort))
     end
 
     if wsEnable then
