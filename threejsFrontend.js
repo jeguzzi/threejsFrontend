@@ -15,7 +15,7 @@ eventsEndpoint.host = eventsEndpoint.host || window.location.hostname;
 eventsEndpoint.port = eventsEndpoint.port || wsPort;
 eventsEndpoint.codec = eventsEndpoint.codec || codec;
 remoteApiEndpoint.host = remoteApiEndpoint.host || window.location.hostname;
-remoteApiEndpoint.port = remoteApiEndpoint.port || 23050;
+remoteApiEndpoint.port = remoteApiEndpoint.port || Number(window.location.port) + 30; // 23050;
 remoteApiEndpoint.codec = remoteApiEndpoint.codec || codec;
 
 function mixin(target, source) {
@@ -162,6 +162,7 @@ class VisualizationStreamClient {
         this.seq = -1;
         this.eventBuffer = {};
         this.receivedGenesisEvents = false;
+        this.state = false;
         if(offline) return;
         this.websocket = new ReconnectingWebSocket(`ws://${this.host}:${this.port}`);
         if(codec == 'cbor') {
@@ -180,7 +181,50 @@ class VisualizationStreamClient {
             this.handleEvent(eventsData);
     }
 
+    hasStarted() {
+        document.getElementById('play').disabled = true;
+        document.getElementById('pause').disabled = false;
+        document.getElementById('stop').disabled = false; 
+        this.state = true;       
+    }
+
+    hasStopped() {
+        document.getElementById('play').disabled = true;
+        document.getElementById('pause').disabled = false;
+        document.getElementById('stop').disabled = false;
+        this.state = true;        
+    }
+
+    hasPaused() {
+        document.getElementById('play').disabled = false;
+        document.getElementById('pause').disabled = true;
+        document.getElementById('stop').disabled = false;
+        this.state = true;        
+    }
+
     handleEvent(eventData) {
+        if (eventData.event=="logMsg") {
+            var msg = eventData.data.msg;
+            // console.info(msg);
+            if (msg == "Simulation started.") {
+                this.hasStarted();
+                // console.info("Start");
+            } else if (msg == "Simulation stopped.") {
+                this.hasStopped();
+                // console.info("Stop");
+            } else if (msg == "Simulation suspended.") {
+                this.hasPaused();
+                // console.info("Pause");
+            } else if (msg == "Simulation resumed.") {
+                this.hasStarted();
+                // console.info("Resume");
+            }  
+        }
+        if (eventData.event=="msgDispatchTime") {
+            if (!this.state) {
+                this.hasStarted();
+            }
+        }
         // unflatten dotted properties
         for(let k in eventData.data ?? {}) {
             if(k.includes('.')) {
