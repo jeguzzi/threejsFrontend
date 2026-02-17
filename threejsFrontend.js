@@ -189,9 +189,9 @@ class VisualizationStreamClient {
     }
 
     hasStopped() {
-        document.getElementById('play').disabled = true;
-        document.getElementById('pause').disabled = false;
-        document.getElementById('stop').disabled = false;
+        document.getElementById('play').disabled = false;
+        document.getElementById('pause').disabled = true;
+        document.getElementById('stop').disabled = true;
         this.state = true;        
     }
 
