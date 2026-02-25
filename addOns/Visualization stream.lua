@@ -187,7 +187,11 @@ function sendEventRaw(d, conn)
         for connection, _ in pairs(wsClients) do
             -- broadcast only after genesis
             if (conn == nil and sentGenesis[connection]) or conn == connection then
-                simWS.send(wsServer, connection, d, simWS.opcode.binary)
+                -- simWS.send(wsServer, connection, d, simWS.opcode.binary)
+                local status, error = pcall(simWS.send, wsServer, connection, d, simWS.opcode.binary)
+                if (not status) then
+                    sim.addLog(sim.verbosity_errors, error)
+                end
             end
         end
     end
