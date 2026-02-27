@@ -5,6 +5,7 @@ custom = {
     rootResource = 'threejsFrontend.html',
     paramNamespace = 'visualizationStream',
 }
+
 pcall(function()
     for k, v in pairs(require 'threejsFrontend-custom') do
         custom[k] = v
@@ -14,6 +15,14 @@ end)
 function P(n)
     -- parameters namespace
     return custom.paramNamespace .. '.' .. n
+end
+
+if (sim.getNamedBoolParam(P'cdn')) then
+    custom.rootResource = 'threejsFrontend_cdn.html'
+    sim.addLog(
+        sim.verbosity_scriptinfos,
+        'Will serve javascripts from CDNs'
+    )
 end
 
 function sysCall_info()

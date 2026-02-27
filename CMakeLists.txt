@@ -16,5 +16,6 @@ find_package(CoppeliaSim 4.5.1.7 REQUIRED)
 
 coppeliasim_add_addon("addOns/Visualization stream.lua")
 coppeliasim_add_resource(threejsFrontend.html)
+coppeliasim_add_resource(threejsFrontend_cdn.html)
 coppeliasim_add_resource(threejsFrontend.js)
 coppeliasim_add_resource_directory(3rdparty)
